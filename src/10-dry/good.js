@@ -1,27 +1,57 @@
 // app-good.js
-const express = require("express");
+import express from "express";
+
 const app = express();
 
+// Reusable authentication middleware
 function authMiddleware(req, res, next) {
-  const token = req.headers["authorization"];
-  if (!token || token !== "secret-token") {
-    return res.status(401).send("Unauthorized");
+  try {
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    if (token !== "secret-token") {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    // Could add token verification, user lookup, etc.
+    next();
+  } catch (error) {
+    res.status(500).json({ error: "Authentication failed" });
   }
-  next();
 }
 
+// Apply authentication to all routes
 app.use(authMiddleware);
 
+// Route handlers can focus on their specific logic
 app.get("/dashboard", (req, res) => {
-  res.send("Dashboard Data");
+  try {
+    res.json({ data: "Dashboard Data" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch dashboard data" });
+  }
 });
 
 app.post("/profile", (req, res) => {
-  res.send("Profile Updated");
+  try {
+    res.json({ message: "Profile Updated" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update profile" });
+  }
 });
 
 app.get("/settings", (req, res) => {
-  res.send("Settings Data");
+  try {
+    res.json({ data: "Settings Data" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch settings" });
+  }
 });
 
-app.listen(3002, () => console.log("Server running on port 3002"));
+const PORT = process.env.PORT || 3002;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+export { app, authMiddleware };

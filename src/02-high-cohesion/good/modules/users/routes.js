@@ -1,7 +1,7 @@
 import express from "express";
-import UserService from "../services/userService";
-import UserRepository from "../repositories/userRepository";
-import EmailService from "../services/emailService";
+import { UserService } from "./service.js";
+import { UserRepository } from "./repository.js";
+import { EmailService } from "../email/service.js";
 
 const router = express.Router();
 
@@ -19,4 +19,4 @@ router.post("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

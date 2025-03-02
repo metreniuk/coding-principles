@@ -5,21 +5,20 @@ class EmailService {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   }
 
-  async sendEmail() {
-    // Inline email sending logic
+  async sendWelcomeEmail(email, name) {
     const msg = {
-      to: user.email,
+      to: email,
       from: "welcome@yourapp.com",
       subject: "Welcome!",
-      text: `Hi ${user.name}, welcome to our app!`,
-      html: `<strong>Hi ${user.name}, welcome to our app!</strong>`,
+      text: `Hi ${name}, welcome to our app!`,
+      html: `<strong>Hi ${name}, welcome to our app!</strong>`,
     };
     try {
       await sgMail.send(msg);
-      console.log(`Email sent to ${user.email}`);
+      console.log(`Email sent to ${email}`);
     } catch (error) {
       console.error("Error sending email", error);
-      return res.status(500).json({ error: "Email sending failed" });
+      throw new Error("Failed to send welcome email");
     }
   }
 }
